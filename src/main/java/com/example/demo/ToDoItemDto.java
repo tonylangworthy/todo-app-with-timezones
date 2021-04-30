@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -8,6 +10,8 @@ import java.util.Objects;
 
 public class ToDoItemDto implements Serializable {
 
+    @JsonSerialize(using = UserTimeZoneSerializer.class)
+    @JsonDeserialize(using = UserTimeZoneDeserializer.class)
     private Long id;
 
     private String name;
@@ -15,9 +19,13 @@ public class ToDoItemDto implements Serializable {
     private boolean isCompleted;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy hh:mm a")
+    @JsonSerialize(using = UserTimeZoneSerializer.class)
+    @JsonDeserialize(using = UserTimeZoneDeserializer.class)
     private LocalDateTime startedAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy hh:mm a")
+    @JsonSerialize(using = UserTimeZoneSerializer.class)
+    @JsonDeserialize(using = UserTimeZoneDeserializer.class)
     private LocalDateTime endedAt;
 
     public Long getId() {

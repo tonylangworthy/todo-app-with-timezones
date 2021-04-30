@@ -24,6 +24,8 @@ public class ToDoController {
     @GetMapping("/todo-list")
     public ResponseEntity<?> getTodoList(@RequestParam(required = false) String timezone) {
 
+
+
         if(timezone == null) timezone = "UTC";
         zoneId = ZoneId.of(timezone);
         List<ToDoItemDto> itemDtoList = new ArrayList<>();
@@ -42,9 +44,9 @@ public class ToDoController {
 
         if(timezone == null) timezone = "UTC";
         zoneId = ZoneId.of(timezone);
-        ToDoItem item = mapDtoToModel(itemDto);
-        return ResponseEntity.ok(toDoItemRepository.save(item));
-
+//        ToDoItem item = mapDtoToModel(itemDto);
+//        return ResponseEntity.ok(toDoItemRepository.save(item));
+        return ResponseEntity.ok(itemDto);
     }
 
     private ToDoItem mapDtoToModel(ToDoItemDto dto) {
