@@ -27,6 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println(user.getUsername());
 
         CustomUserDetails customUserDetails = new CustomUserDetails(
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
                 true,
@@ -35,7 +36,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 true,
                 Collections.emptyList());
 
-        System.out.println(customUserDetails.toString());
         return customUserDetails;
 
     }

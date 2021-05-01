@@ -2,8 +2,13 @@ package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -14,23 +19,25 @@ public class ToDoController {
 
     private ToDoItemRepository toDoItemRepository;
 
-    private ZoneId zoneId;
+    private UserRepository userRepository;
 
     @Autowired
-    public ToDoController(ToDoItemRepository toDoItemRepository) {
+    public ToDoController(ToDoItemRepository toDoItemRepository, UserRepository userRepository) {
         this.toDoItemRepository = toDoItemRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/todo-list")
-    public ResponseEntity<?> getTodoList(@RequestParam(required = false) String timezone) {
+    public ResponseEntity<?> getTodoList() {
 
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication auth = context.getAuthentication();
 
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
 
-        if(timezone == null) timezone = "UTC";
-        zoneId = ZoneId.of(timezone);
         List<ToDoItemDto> itemDtoList = new ArrayList<>();
 
-        Iterable<ToDoItem> itemList = toDoItemRepository.findAll();
+        Iterable<ToDoItem> itemList = toDoItemRepository.findAllByUserId(userDetails.getId());
         itemList.forEach(item -> {
             itemDtoList.add(mapModelToDto(item));
         });
@@ -39,14 +46,18 @@ public class ToDoController {
     }
 
     @PostMapping("/todo-list")
-    public ResponseEntity<?> createTodoItem(@RequestBody ToDoItemDto itemDto,
-                                            @RequestParam(required = false) String timezone) {
+    public ResponseEntity<?> createTodoItem(@RequestBody ToDoItemDto itemDto) {
 
-        if(timezone == null) timezone = "UTC";
-        zoneId = ZoneId.of(timezone);
-//        ToDoItem item = mapDtoToModel(itemDto);
-//        return ResponseEntity.ok(toDoItemRepository.save(item));
-        return ResponseEntity.ok(itemDto);
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication auth = context.getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+
+        ToDoItem item = mapDtoToModel(itemDto);
+        User user = userRepository.findById(userDetails.getId()).orElseThrow();
+        item.setUser(user);
+        return ResponseEntity.ok(toDoItemRepository.save(item));
     }
 
     private ToDoItem mapDtoToModel(ToDoItemDto dto) {
@@ -55,13 +66,13 @@ public class ToDoController {
         item.setName(dto.getName());
         item.setCompleted(dto.isCompleted());
 
-        ZonedDateTime offsetStartedAt = dto.getStartedAt().atZone(zoneId);
+        LocalDateTime offsetStartedAt = dto.getStartedAt();
         item.setStartedAt(offsetStartedAt);
 
-        if(dto.getEndedAt() != null) {
-            ZonedDateTime offsetEndedAt = dto.getEndedAt().atZone(zoneId);
-            item.setEndedAt(offsetEndedAt.toLocalDateTime());
-        }
+//        if(dto.getEndedAt() != null) {
+            LocalDateTime offsetEndedAt = dto.getEndedAt();
+            item.setEndedAt(offsetEndedAt);
+//        }
         return item;
     }
 
@@ -71,15 +82,16 @@ public class ToDoController {
         dto.setName(item.getName());
         dto.setCompleted(item.isCompleted());
 
-        ZonedDateTime startedAt = item.getStartedAt().withZoneSameInstant(zoneId);
+        LocalDateTime startedAt = item.getStartedAt();
 
-        System.out.println(startedAt);
-        dto.setStartedAt(startedAt.toLocalDateTime());
+        System.out.println("startedAt: " + startedAt);
+        dto.setStartedAt(startedAt);
 
-        if(dto.getEndedAt() != null) {
-            ZonedDateTime offsetEndedAt = dto.getEndedAt().atZone(zoneId);
-            dto.setStartedAt(offsetEndedAt.toLocalDateTime());
-        }
+//        if(dto.getEndedAt() != null) {
+            LocalDateTime endedAt = item.getEndedAt();
+            System.out.println("endedAt: " + endedAt);
+            dto.setEndedAt(endedAt);
+//        }
 
         return dto;
     }

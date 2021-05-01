@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class ToDoItemDto implements Serializable {
 
-    @JsonSerialize(using = UserTimeZoneSerializer.class)
-    @JsonDeserialize(using = UserTimeZoneDeserializer.class)
     private Long id;
 
     private String name;

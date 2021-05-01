@@ -3,6 +3,7 @@ package com.example.demo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
@@ -26,16 +27,16 @@ public class ToDoItem {
     private User user;
 
     @Column(name = "started_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private ZonedDateTime startedAt;
+    private LocalDateTime startedAt;
 
     @Column(name = "ended_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private LocalDateTime endedAt;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
     public Long getId() {
         return id;
@@ -70,11 +71,11 @@ public class ToDoItem {
         this.user = user;
     }
 
-    public ZonedDateTime getStartedAt() {
+    public LocalDateTime getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(ZonedDateTime startedAt) {
+    public void setStartedAt(LocalDateTime startedAt) {
         this.startedAt = startedAt;
     }
 
@@ -88,19 +89,19 @@ public class ToDoItem {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = Instant.now();
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
