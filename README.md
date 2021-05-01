@@ -1,7 +1,7 @@
 # To Do App with time zones
 ### Why did you make this?
 Since I've never worked with time zones in Java, I decided to make a simple application 
-that stores all timestamps in a database in UTC, then converts them to a from local time zones. 
+that stores all timestamps in a database in UTC, then converts them to and from local time zones. 
 This also uses Spring Security to authenticate users to demonstrate users in various time zones.
 This is a simple REST API "To Do App" that stores and displays todo items.
 
