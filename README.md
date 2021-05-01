@@ -24,6 +24,11 @@ This is a simple REST API "To Do App" that stores and displays todo items.
 ### Login
 **POST** `http://localhost:8086/login`
 
+This app uses Basic HTTP authentication, and login is easy with Postman. Just click the 
+authorization tab, choose Basic Auth, fill in your credentials you created when you "Registered",
+then just hit send. The Spring Boot application will send a cookie that Postman can use 
+for all other requests. 
+
 ![Login using Postman](login.png)
 
 ### Create ToDo Item
